@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stappenteller</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <button id="stappenteller">0</button>
+    
+    <script>
+        $(document).ready(function() {
+            let $button = $('#stappenteller');
+            
+            $button.click(function() {
+                let currentValue = parseInt($button.text());
+                console.log(currentValue);
+                $button.text(currentValue + 1);
+            });
+        });
+    </script>
+</body>
+</html>     
