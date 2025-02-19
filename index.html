@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .highlight {
+            color: blue
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    
+        $(document).ready(function() {
+            $("#knop1").click(function() {
+                $('p').text("Dit is een andere tekst");
+            })
+
+            $("#knop2").click(function() {
+                $('p').addClass('highlight');
+            })
+            
+            $("#knop3").click(function() {
+                
+                $('p').text("Klik op een knop om deze tekst te veranderen");
+            })
+             
+        });
+    </script>
+</head>
+<body>
+
+    <h2 id="hoofdtitel">Welkom bij de oefening</h2>
+    <p id="tekst">Klik op een knop om deze tekst te veranderen.</p>
+
+    <button id="knop1">Verander tekst</button>
+    <button id="knop2">Maak tekst blauw</button>
+    <button id="knop3">Reset tekst</button>
+    
+</body>
+</html>

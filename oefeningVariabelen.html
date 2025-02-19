@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .highlight { color: green;
+         }
+         .geel { background-color: yellow;
+          }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+           let $naamInput = $("#naamInput");
+            let $toonTekst = $("#toonTekst"); 
+            let $resultaat = $("#resultaat");
+
+            $toonTekst.click(function() {
+               $resultaat.text($naamInput.val());
+            });
+
+            $naamInput.focus(function() {
+                $(this).addClass('geel');
+            });
+
+            $naamInput.blur(function() {
+                $(this).removeClass('geel');
+            });
+        });
+
+    </script>
+
+</head>
+<body>
+
+
+    <h2>Formulier Interactie</h2>
+    <input type="text" id="naamInput" placeholder="Typ hier iets">
+    <button id="toonTekst">Toon tekst</button>
+    <p id="resultaat"></p>
+    
+</body>
+</html>
