@@ -12,13 +12,17 @@
     <script>
         $(document).ready(function() {
             let $button = $('#stappenteller');
-            
+    
+            console.log(parseInt($button.text()));
+    
             $button.click(function() {
-                let currentValue = parseInt($button.text());
-                console.log(currentValue);
-                $button.text(currentValue + 1);
+                let nieuw = parseInt($button.text()) + 1; 
+                $button.text(nieuw); 
+                console.log(nieuw); 
             });
         });
     </script>
+    
+    
 </body>
 </html>     
