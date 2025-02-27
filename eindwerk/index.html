@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sterrenbeeld Calculator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1d0a2d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        color: white;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+      }
+
+      form {
+        background-color: #080f0b;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+
+      label {
+        font-size: 1.1em;
+        margin-bottom: 5px;
+        display: block;
+      }
+
+      input {
+        width: 80%;
+        padding: 10px;
+        font-size: 1em;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 3px solid #ccc;
+      }
+
+      input:focus {
+        border-color: #9c5ed2;
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #ff9d00;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .error {
+        color: red;
+        font-size: 12px;
+        display: block;
+      }
+
+      .tooltip {
+        display: none;
+        font-size: 12px;
+        color: #fff;
+
+        position: absolute;
+        padding: 5px;
+        border-radius: 3px;
+        z-index: 10;
+        top: -25px;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bereken je Sterrenbeeld</h1>
+
+    <form id="birthdate-form">
+      <label for="day">Geboortedag:</label>
+      <input
+        type="text"
+        id="day"
+        name="day"
+        placeholder="Geef je geboortedag in"
+        title="Geef je geboortedag in."
+      />
+      <div class="tooltip" id="day-tooltip">
+        Geef de dag van je geboorte op (1-31).
+      </div>
+
+      <label for="month">Geboortemaand:</label>
+      <input
+        type="text"
+        id="month"
+        name="month"
+        placeholder="Geef je geboortemaand in"
+        title="Geef je geboortemaand in."
+      />
+      <div class="tooltip" id="month-tooltip">
+        Geef de maand van je geboorte op (1-12).
+      </div>
+
+      <button type="submit" id="calculate-button">Bereken Sterrenbeeld</button>
+    </form>
+
+    <h2 id="zodiac-sign"></h2>
+    <img id="zodiac-image" src="" alt="Sterrenbeeld" style="display: none" />
+
+    <script>
+      $(document).ready(function () {
+        let $form = $("#birthdate-form");
+        let $dayInput = $("#day");
+        let $monthInput = $("#month");
+        let $zodiacSign = $("#zodiac-sign");
+        let $zodiacImage = $("#zodiac-image");
+
+        let dayOk = false;
+        let monthOk = false;
+
+        function showError(input, message) {
+          let errorId = input.attr("id") + "-error";
+          if ($("#" + errorId).length === 0) {
+            input.after(
+              '<div class="error" id="' + errorId + '">' + message + "</div>"
+            );
+          }
+        }
+
+        function removeError(input) {
+          let errorId = input.attr("id") + "-error";
+          $("#" + errorId).remove();
+        }
+
+        $dayInput
+          .focus(function () {
+            $(this).attr("placeholder", "");
+            $("#day-tooltip").show();
+            removeError($(this));
+          })
+          .blur(function () {
+            let dayValue = $(this).val();
+            if (dayValue == "") {
+              $(this).attr("placeholder", "Geef je geboortedag in");
+              dayOk = false;
+              showError($(this), "Voer een geldige dag in (1-31).");
+              $("#day-tooltip").hide();
+            } else if (
+              isNaN(dayValue) ||
+              parseInt(dayValue) < 1 ||
+              parseInt(dayValue) > 31
+            ) {
+              dayOk = false;
+              showError($(this), "Voer een geldige dag in (1-31).");
+              $("#day-tooltip").hide();
+            } else {
+              dayOk = true;
+              removeError($(this));
+              $("#day-tooltip").hide();
+            }
+          });
+
+        $monthInput
+          .focus(function () {
+            $(this).attr("placeholder", "");
+            $("#month-tooltip").show();
+            removeError($(this));
+          })
+          .blur(function () {
+            let monthValue = $(this).val();
+            if (monthValue === "") {
+              $(this).attr("placeholder", "Geef je geboortemaand in");
+              monthOk = false;
+              showError($(this), "Voer een geldige maand in (1-12).");
+              $("#month-tooltip").hide();
+            } else if (
+              isNaN(monthValue) ||
+              parseInt(monthValue) < 1 ||
+              parseInt(monthValue) > 12
+            ) {
+              monthOk = false;
+              showError($(this), "Voer een geldige maand in (1-12).");
+              $("#month-tooltip").hide();
+            } else {
+              monthOk = true;
+              removeError($(this));
+              $("#month-tooltip").hide();
+            }
+          });
+
+        $form.submit(function (event) {
+          event.preventDefault();
+
+          if (!dayOk || !monthOk) {
+            alert("Vul de velden correct in!");
+            return;
+          }
+
+          let day = parseInt($dayInput.val());
+          let month = parseInt($monthInput.val());
+
+          let zodiac = calculateZodiacSign(day, month);
+
+          $zodiacSign.text("Je sterrenbeeld is: " + zodiac.name);
+          $zodiacImage.attr("src", "img/" + zodiac.image);
+          $zodiacImage.show();
+        });
+
+        function calculateZodiacSign(day, month) {
+          let zodiac = {
+            name: "",
+            image: "",
+          };
+
+          if ((month == 1 && day <= 19) || (month == 12 && day >= 21)) {
+            zodiac.name = "Steenbok";
+            zodiac.image = "steenbok.jpg";
+          } else if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) {
+            zodiac.name = "Waterman";
+            zodiac.image = "waterman.jpg";
+          } else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) {
+            zodiac.name = "Vissen";
+            zodiac.image = "vissen.jpg";
+          } else if ((month == 3 && day >= 21) || (month == 4 && day <= 20)) {
+            zodiac.name = "Ram";
+            zodiac.image = "ram.jpg";
+          } else if ((month == 4 && day >= 21) || (month == 5 && day <= 21)) {
+            zodiac.name = "Stier";
+            zodiac.image = "stier.jpg";
+          } else if ((month == 5 && day >= 22) || (month == 6 && day <= 21)) {
+            zodiac.name = "Tweelingen";
+            zodiac.image = "tweelingen.jpg";
+          } else if ((month == 6 && day >= 22) || (month == 7 && day <= 22)) {
+            zodiac.name = "Kreeft";
+            zodiac.image = "kreeft.jpg";
+          } else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) {
+            zodiac.name = "Leeuw";
+            zodiac.image = "leeuw.jpg";
+          } else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) {
+            zodiac.name = "Maagd";
+            zodiac.image = "maagd.jpg";
+          } else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) {
+            zodiac.name = "Weegschaal";
+            zodiac.image = "weegschaal.jpg";
+          } else if ((month == 10 && day >= 23) || (month == 11 && day <= 22)) {
+            zodiac.name = "Schorpioen";
+            zodiac.image = "schorpioen.jpg";
+          } else if ((month == 11 && day >= 23) || (month == 12 && day <= 20)) {
+            zodiac.name = "Boogschutter";
+            zodiac.image = "boogschutter.jpg";
+          }
+
+          return zodiac;
+        }
+      });
+    </script>
+  </body>
+</html>
